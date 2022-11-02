@@ -1,10 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": "../../libraries/Lamlia"
 		},
 		{
-			"path": "../../libraries/Lamlia"
+			"path": "."
 		}
 	],
 	"settings": {}
