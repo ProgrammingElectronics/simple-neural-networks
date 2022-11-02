@@ -1,5 +1,3 @@
-#include <assert.h>
-
 #define NUM_WEIGHTS 3
 #define NUM_INPUTS 3
 

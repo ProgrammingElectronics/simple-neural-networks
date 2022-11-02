@@ -2,5 +2,5 @@
     "board": "arduino:avr:uno",
     "programmer": "arduino:avrisp",
     "port": "/dev/tty.usbmodem143201",
-    "sketch": "02-multiple-inputs/arduino/multiple-inputs/multiple-inputs.ino"
+    "sketch": "../../libraries/Lamlia/tests/tests.ino"
 }
