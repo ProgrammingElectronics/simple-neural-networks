@@ -2,5 +2,5 @@
     "board": "arduino:avr:uno",
     "programmer": "arduino:avrisp",
     "port": "/dev/tty.usbmodem143201",
-    "sketch": "../../libraries/Lamlia/tests/tests.ino"
+    "sketch": "05-multiple-predictions/arduino/multiple-predictions/multiple-predictions.ino"
 }
