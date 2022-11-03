@@ -1,6 +1,0 @@
-{
-    "board": "arduino:avr:uno",
-    "programmer": "arduino:avrisp",
-    "port": "/dev/tty.usbmodem143201",
-    "sketch": "simple-neural-network.ino"
-}
