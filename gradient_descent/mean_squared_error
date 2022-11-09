@@ -1,0 +1,59 @@
+weight = 0.1
+learning_rate = 0.01
+
+def neural_network(input, weight):
+    prediction = input * weight
+    return prediction
+
+def mean_squared_error(pred, actual):
+
+    return (pred - actual)**2
+
+#data
+number_of_toes = [8.5]
+win_or_lose_binary = [1] #won!
+
+input = number_of_toes[0]
+actual = win_or_lose_binary[0]
+
+# Make a prediction
+pred = neural_network(input, weight)
+print("prediction-> ",pred)
+
+# Compare prediction to actual
+error = mean_squared_error(pred, actual)
+print("error-> ", error)
+
+# Learn -> Adjust weights up and down by learning rate, and which ever minimizes error, go with that
+
+# Adjust weights UP 
+pred_error_up = neural_network(input, weight+learning_rate)
+print("pred_error_up", pred_error_up )
+
+error_up = mean_squared_error(pred_error_up, actual) 
+print("error_up", error_up )
+
+# Adjust weights DOWN
+pred_error_down = neural_network(input, weight-learning_rate)
+print("pred_error_down", pred_error_down)
+
+error_down = mean_squared_error(pred_error_down, actual) 
+print("error_down", error_down )
+
+# Adjust weights to winner
+
+if error_up < error or error_down < error:
+    if error_up < error_down:
+        weight += learning_rate
+    else:
+        weight -= learning_rate
+
+adjusted_weight = weight
+
+print("adjusted_weight", adjusted_weight)
+
+new_pred = neural_network(input, weight)
+print("new_prediction", new_pred)
+
+new_error = mean_squared_error(new_pred, actual)
+print("new_error",new_error)
