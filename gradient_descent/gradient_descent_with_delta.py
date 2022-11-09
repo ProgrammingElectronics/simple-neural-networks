@@ -7,7 +7,7 @@ def neural_network(input, weight):
 def mean_squared_error(pred, actual):
     return (pred - actual) ** 2
 
-weight = 0.1
+weight = 0.01
 alpha = 0.01
 
 number_of_toes = [8.5]
@@ -16,7 +16,7 @@ win_or_lose_binary = [1] # win yo!
 input = number_of_toes[0]
 actual = win_or_lose_binary[0] 
 
-table = np.array([[],[]])
+table = np.zeros((20,2))
 
 for iteration in range(20):
 
@@ -26,14 +26,15 @@ for iteration in range(20):
     # Compare
     error = mean_squared_error(pred, actual)
 
-    table[iteration][0] = weight
-    table[iteration][1] = error
+    table[iteration] = [weight, error]
     
-    # print("error: ", error, " pred: ", pred)
     # Learn
     delta = pred - actual
     wt_delta = delta * input
     weight -= wt_delta * alpha
 
-
 print(table)
+plt.xlabel("weight")
+plt.ylabel("error")
+plt.plot(table[:,0], table[:,1])
+plt.show()
