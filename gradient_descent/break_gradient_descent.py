@@ -24,4 +24,4 @@ for iteration in range(20):
 
 
 plt.plot(table[:,0], table[:,1])
-plt.show()/watch
+plt.show()

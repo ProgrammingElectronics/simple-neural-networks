@@ -1,1 +1,5 @@
-# simple-neural-network
+# Study Notes from Grokking Deep Learning
+
+
+
+
