@@ -72,8 +72,3 @@ alpha_slider.on_changed(update)
 input_slider.on_changed(update)
 
 plt.show()
-
-# plt.ylabel("Error")
-# plt.xlabel("Weight")
-
-# plt.plot(data[:,0], data[:,1])
