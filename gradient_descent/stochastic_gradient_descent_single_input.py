@@ -1,11 +1,5 @@
 import numpy as np
 
-def neural_network(input, weights, actual, alpha):
-
-    pass
-
-
-
 # Weights
 weights = np.array([0.3, 0.2, 0.9])
 
