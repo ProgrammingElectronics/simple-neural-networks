@@ -2,6 +2,7 @@ import numpy as np
 
 np.random.seed(1)
 
+
 def relu(x):
 
     return (x > 0) * x
@@ -26,11 +27,11 @@ walk_vs_stop = np.array([0, 1, 0, 1, 1, 0])
 # Knobs
 layer_1_hidden_nodes = 4
 alpha = 0.2
-epochs = 60
+epochs = 1
 
 # Weights
-weights_0_1 = 2*np.random.random((3, layer_1_hidden_nodes))-1 # (3,4)
-weights_1_2 = 2*np.random.random((layer_1_hidden_nodes,1))-1 # (4, 1)
+weights_0_1 = 2*np.random.random((3, layer_1_hidden_nodes))-1  # (3,4)
+weights_1_2 = 2*np.random.random((layer_1_hidden_nodes, 1))-1  # (4, 1)
 
 
 for epoch in range(epochs):
@@ -39,19 +40,23 @@ for epoch in range(epochs):
 
     for input, actual in zip(streetlights, walk_vs_stop):
 
-        print("input shape = " + str(input.shape)) # (1,3)
-        
         # Predict
-        layer_1 = relu(input.T.dot(weights_0_1)) # (4,1)
-        layer_2 = layer_1.dot(weights_1_2) # ()
+        layer_1 = relu(input.dot(weights_0_1))  # (3,1) dot (3,4) -> (4,1)
+        layer_2 = layer_1.dot(weights_1_2)  # (4,1) dot (4,1) -> (1,1)
+        
+        # Compare
+        mse = (layer_2 - actual) ** 2
+        print(mse)
 
-        print("layer_1 shape = " + str(layer_1.shape))
-        print("layer_2 shape = " + str(layer_2.shape))
+        # Learn -> Adjust Weights
+        
+        # Calculate weight deltas for each layer, start at output and working backwards
+        layer_2_delta = layer_2 - actual
+        layer_1_delta = layer_2_delta.dot(weights_1_2.T) * relu_derivative(layer_1)  # (1,1) dot (1,4) -> (1,4) * (4,1)
+        
+        #layer_2_wt_delta = layer_1.T.dot(layer_2_delta)  # Scalar * (1,1)
 
 
-
-
-
-
-
+        # layer 1 to layer 0
+        
 
