@@ -67,6 +67,7 @@ for epoch in range(epochs):
     weights -= weight_delta.T * alpha # (784,10) - (10,784) -> (784,10)
     #inspect_array_to_console(weights, "weights") 
     
+
     print("Error" + str(mse))
     # print("Actual" + str(actual))
     print("Pred" + str(pred))
