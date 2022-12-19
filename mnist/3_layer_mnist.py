@@ -33,13 +33,13 @@ def relu_deriv(x):
 
 ### Network Layout ###
 input_layer_nodes = 784
-hidden_layer_nodes = 100
+hidden_layer_nodes = 10
 output_layer_nodes = 10
 
 ### Create knobs ###
-alpha = 0.2
+alpha = 0.000000001
 print_shape = True
-epochs = 3
+epochs = 60
 
 ### Inspect Data ###
 # if (print_shape):
@@ -73,9 +73,9 @@ for epoch in range(epochs):
     
     print_flag = True
 
-    total_error = 0
+    error = 0
 
-    for input, label in zip(inputs[1:2], labels[1:2]):
+    for input, label in zip(inputs[0:100], labels[0:100]):
 
         # Prep input and label
         l0 = input.reshape((1, 784))
@@ -96,16 +96,15 @@ for epoch in range(epochs):
         #     print("l2 shape =", l2.shape)  # (1,10)
 
         #### Compare -> calculate MSE
-        mse = np.sum((l2 - actual) ** 2)
-        total_error += mse
+        error = np.sum((l2 - actual) ** 2)
         
         if (print_shape and print_flag):
             print("######################")
             print("l2 =", l2)
             print("actual =", actual)
             print("##")
-            print("mse =", mse)
-            print("total error =", total_error)
+            print("error =", error)
+            
         # Calculate delta for l2 and l1
         l2_delta = l2 - actual # (1,10) - (1, 10) -> (1, 10)
         l1_delta = l2_delta.dot(wt_1_2.T) * relu_deriv(l1) # (1, 10) dot (10, 100) -> (1,100) 
