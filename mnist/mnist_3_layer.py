@@ -37,7 +37,7 @@ hidden_layer_nodes = 100
 output_layer_nodes = 10
 
 ### Adjustments ###
-alpha = 0.000000001
+alpha = 0.000000009
 epochs = 100
 
 ## Prepare data ###
@@ -63,10 +63,10 @@ for epoch in range(epochs):
     
     error = 0
 
-    for input, label in zip(inputs, labels):
+    for input, label in zip(inputs[0:1000], labels[0:1000]):
 
         # Prep input and label
-        l0 = input.reshape((1, 784)).astype('float64')
+        l0 = input.reshape((1, 784))#.astype('float64')
         actual = label.reshape((1, 10))
 
         ### Predict L1 and L2
@@ -74,7 +74,7 @@ for epoch in range(epochs):
         l2 = l1.dot(wt_1_2)
 
         #### Compare -> calculate MSE
-        error = np.sum((l2 - actual) ** 2).astype('float64')
+        error = np.sum((l2 - actual) ** 2)#.astype('float64')
         
         # Calculate delta for l2 and l1
         l2_delta = l2 - actual
