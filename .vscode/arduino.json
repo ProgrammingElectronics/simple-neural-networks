@@ -2,5 +2,5 @@
     "board": "arduino:avr:uno",
     "programmer": "arduino:avrisp",
     "port": "/dev/tty.usbmodem143201",
-    "sketch": "arduino/multiple-inputs-outputs/multiple-inputs-outputs.ino"
+    "sketch": "arduino/multiple-predictions/multiple-predictions.ino"
 }

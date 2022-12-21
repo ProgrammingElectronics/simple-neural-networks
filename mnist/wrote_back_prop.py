@@ -58,10 +58,10 @@ if(print_preamble):
 
 ### Network Arch
 hl_1_nodes = 100
-hl_2_nodes = 50
+hl_2_nodes = 100
 
 ### Network Controls
-alpha = 0.000000000000001
+alpha = 0.000000000000000001
 epochs = 100
 
 ### create weights
@@ -77,7 +77,7 @@ for epoch in range(epochs):
     
     error = 0
 
-    for input, actual in zip(inputs[0:10], labels[0:10]):
+    for input, actual in zip(inputs[0:1000], labels[0:1000]):
 
         ### reshape input and actual
         l_0 = input.reshape(1,784)
