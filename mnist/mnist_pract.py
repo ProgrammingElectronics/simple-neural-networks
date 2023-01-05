@@ -12,7 +12,7 @@ def create_embedding(x):
 # Relu
 def relu(x):
 
-    return (x > 0) * x
+    return (x >= 0) * x
 
 # Relu Derivative
 def relu_deriv(x):
@@ -31,11 +31,14 @@ assert x_train.shape == (60000,28,28) , f"expected (60000,24,24), actual {x_trai
 assert y_train.shape == (60000,) , f"expected (60000,), actual {y_train.shape}"
 
 # Form Data
-inputs = x_train.reshape((60000,784)) / 255
+images = x_train.reshape((60000,784)) / 255
 labels = np.array([create_embedding(y) for y in y_train])
 
-assert inputs.shape == (60000,784) , f"Expected (60000,728), was {inputs.shape}"
+assert images.shape == (60000,784) , f"Expected (60000,728), was {images.shape}"
 assert labels.shape == (60000,10) , f"Expected (60000,10), was {labels.shape}"
+
+assert np.argmax(labels[0:1]) == y_train[0:1], f"{labels[0:1]} != {y_train[0:1]}" 
+
 
 # Architechture
 hidden_layer_size = 40
@@ -43,6 +46,8 @@ hidden_layer_size = 40
 # Weights
 w_0_1 = 0.2*np.random.random((784,hidden_layer_size)) - 0.1
 w_1_2 = 0.2*np.random.random((hidden_layer_size,10)) - 0.1
+
+
 
 # Controls
 epochs = 350
@@ -55,9 +60,10 @@ plot_error = np.zeros(epochs)
 ### Train
 for epoch in range(epochs):
 
-    total_error = 0
+    error = 0.0
+    correct_cnt = 0
 
-    for input, label in zip(inputs[:sample_size], labels[:sample_size]):
+    for input, label in zip(images[:sample_size], labels[:sample_size]):
     
         input = input.reshape((1,784))
         label = label.reshape((1,10))
@@ -70,8 +76,10 @@ for epoch in range(epochs):
         l2 = l1.dot(w_1_2)
 
         ### Compare
-        error = (l2 - label) ** 2
-        total_error += np.sum(error)
+        error += np.sum((label - l2) ** 2)
+        correct_cnt += int(np.argmax(l2) == np.argmax(label))
+        # total_error += np.sum(error)
+
 
         # Delta
         l2_delta = l2 - label
@@ -88,8 +96,8 @@ for epoch in range(epochs):
         w_0_1 -= l1_wt_delta.T * alpha
 
     # Print Error
-    print("total error", total_error)
-    plot_error[epoch] = total_error
+    print("Epoch", epoch, "Error", error/float(sample_size), "Correct", correct_cnt / float(sample_size))
+    plot_error[epoch] = error
 
 # Plot Error
 fig, ax = plt.subplots()

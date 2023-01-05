@@ -19,8 +19,13 @@ for i,l in enumerate(y_test):
 np.random.seed(1)
 relu = lambda x:(x>=0) * x
 relu2deriv = lambda x: x>=0
-alpha, iterations, hidden_size, pixels_per_image, num_labels = \
-                                              (0.005, 350, 40, 784, 10)
+
+alpha = 0.005
+iterations =  350
+hidden_size = 40
+pixels_per_image = 784
+num_labels =  10
+
 weights_0_1 = 0.2*np.random.random((pixels_per_image,hidden_size)) - 0.1
 weights_1_2 = 0.2*np.random.random((hidden_size,num_labels)) - 0.1
 
