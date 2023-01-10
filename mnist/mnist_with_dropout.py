@@ -49,15 +49,16 @@ assert test_labels.shape == (10000,10) , f"Expected (10000,10), was {labels.shap
 assert np.argmax(test_labels[0:1]) == y_test[0:1], f"{test_labels[0:1]} != {y_test[0:1]}" 
 
 # Architechture
-hidden_layer_size = 40
+hidden_layer_size = 100
 
 # Weights
 w_0_1 = 0.2*np.random.random((784,hidden_layer_size)) - 0.1
 w_1_2 = 0.2*np.random.random((hidden_layer_size,10)) - 0.1
 
 # Controls
-epochs = 350
-alpha = 0.005
+epochs = 300
+batch_size = 100
+alpha = 0.001
 sample_size = 1000
 
 # Visualize
@@ -77,8 +78,11 @@ for epoch in range(epochs):
         assert input.shape == (1,784) , f"Expected (1,784), was {input.shape}"
         assert label.shape == (1,10) , f"Expected (1,10), was {label.shape}"
         
-        ### Predict
+
+        ### Predict with drop out
         l1 = relu(input.dot(w_0_1))
+        dropout_mask = np.random.randint(2, size=l1.shape)
+        l1 *= dropout_mask * 2
         l2 = l1.dot(w_1_2)
 
         ### Compare
@@ -88,6 +92,7 @@ for epoch in range(epochs):
         # Delta
         l2_delta = l2 - label
         l1_delta = l2_delta.dot(w_1_2.T)*relu_deriv(l1) # Back propogation
+        l1_delta *= dropout_mask
 
         ### Update Weights
 
@@ -103,6 +108,7 @@ for epoch in range(epochs):
     print("Epoch", epoch, "Error", error/float(sample_size), "Correct", correct_cnt / float(sample_size))
     plot_error[epoch] = error
 
+### TEST ##########
 
 error = 0
 correct_cnt = 0
