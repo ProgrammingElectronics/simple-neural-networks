@@ -37,7 +37,7 @@ assert test_images.shape == (len(x_test), 784) , f"Expect (1000, 784, actual {te
 
 # Controls
 alpha = 0.1
-epochs = 300
+epochs = 1
 mini_batch_size = 100
 
 # Network Architecture
@@ -50,12 +50,19 @@ w_1_2 = 2 * np.random.random((hidden_size, 10)) - 1
 # Training
 for epoch in range(epochs):
 
-    pass
-    # Predict
-
     # Mini-batch
+    for i in range(int(len(labels)/mini_batch_size)):
+        
+        # Drop Out Mask
+        drop_out_mask = np.random.randint(2, size=(mini_batch_size,hidden_size))
 
-    # Drop Out
+        # Predict
+        l0 = images[i * mini_batch_size:i * mini_batch_size + mini_batch_size]
+        l1 = relu(l0.dot(w_0_1)) * drop_out_mask
+        
+        assert l0.shape == (mini_batch_size,784) , f"Expect ({mini_batch_size}, 784), actual {l0.shape}" 
+        assert l1.shape == (100,hidden_size) , f"Expect (100,{hidden_size}), actual {l1.shape}"
+        
 
     # Compare
 
