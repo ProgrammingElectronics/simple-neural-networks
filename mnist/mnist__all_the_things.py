@@ -50,26 +50,45 @@ w_1_2 = 2 * np.random.random((hidden_size, 10)) - 1
 # Training
 for epoch in range(epochs):
 
+    # Metrics
+    error = 0
+    correct_count = 0
+
     # Mini-batch
     for i in range(int(len(labels)/mini_batch_size)):
         
+        # Mini Batch
+        images_mini_batch = images[i * mini_batch_size:i * mini_batch_size + mini_batch_size]
+        labels_mini_batch = labels[i * mini_batch_size:i * mini_batch_size + mini_batch_size]
+
         # Drop Out Mask
         drop_out_mask = np.random.randint(2, size=(mini_batch_size,hidden_size))
 
-        # Predict
-        l0 = images[i * mini_batch_size:i * mini_batch_size + mini_batch_size]
+        # Predict #
+        l0 = images_mini_batch
         l1 = relu(l0.dot(w_0_1)) * drop_out_mask
+        l2 = l1.dot(w_1_2)
         
         assert l0.shape == (mini_batch_size,784) , f"Expect ({mini_batch_size}, 784), actual {l0.shape}" 
         assert l1.shape == (100,hidden_size) , f"Expect (100,{hidden_size}), actual {l1.shape}"
+        assert l2.shape == (100,10) , f"Expect (100,10), actual {l2.shape}"
+
+        # Compare #
+        # Error and Accuracy
+        error += np.sum((l2 - labels_mini_batch) ** 2)
         
+        for i in range(mini_batch_size):
+            correct_count += np.argmax(labels_mini_batch[i]) == np.argmax(l2[i])
+            
+        # Update Weights
+        l2_delta = (l2 - labels_mini_batch) # prediction - actual
+        l1_delta = l2_delta.dot(w_1_2.T)*relu_deriv(l1) 
+        
+        l2_wt_delta = l2_delta.T.dot(l1)
+        l1_wt_delta = l1_delta.T.dot(l0)
 
-    # Compare
-
-    # Error and Accuracy
-
-    # Update Weights
-
+        w_1_2 -= l2_wt_delta.T * alpha
+        w_0_1 -= l1_wt_delta.T * alpha
 # Testing
 
     # Predict
