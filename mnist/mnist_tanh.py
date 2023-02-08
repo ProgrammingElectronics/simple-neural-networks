@@ -35,28 +35,29 @@ def embedding(x):
 # Transform Data
 num_train_samples = 1000
 
-images = np.reshape(x_train[:num_train_samples] / 256, (num_train_samples, 784)) 
+images = np.reshape(x_train[:num_train_samples] / 255, (num_train_samples, 784)) 
 labels = np.reshape([embedding(y) for y in y_train[0:num_train_samples]], (num_train_samples, 10))
 
-test_images = np.reshape(x_test / 256, (len(x_test), 784))
+test_images = np.reshape(x_test / 255, (len(x_test), 784))
 test_labels = np.reshape([embedding(y) for y in y_test], (len(y_test), 10))
 
 ## Controls
-alpha = 0.001
-epochs = 1
+alpha = 2
+epochs = 300
 
 mini_batch_size = 100
 num_mini_batches = int(len(images)/mini_batch_size)
 
 ## Architecture
-hidden_layer_size = 40
+hidden_layer_size = 100
 
 ## Weights
 wt_0_1 = 0.02 * np.random.random((784, hidden_layer_size)) - 0.01
 wt_1_2 = 0.2 * np.random.random((hidden_layer_size, 10)) - 0.1
 
 ## Reporting
-accuracy_plot = np.zeros((epochs)) 
+freq = 10 
+train_accuracy_plot = np.zeros((int(epochs/freq))) 
 
 
 ## Training
@@ -86,18 +87,19 @@ for epoch in range(epochs):
         
         ## Learn ######################################
         # Deltas
-        l2_delta = (l2 - batch_labels)
+        l2_delta = (l2 - batch_labels) / mini_batch_size 
         l1_delta = l2_delta.dot(wt_1_2.T) * tanh_deriv(l1) * drop_out_mask
 
         # Weight Deltas
-        l2_wt_delta = l2_delta.T.dot(wt_0_1)
-        l1_wt_delta = l1_delta.T.dot(wt_1_2)
+        l2_wt_delta = l2_delta.dot(wt_1_2.T)
+        l1_wt_delta = l1_delta.dot(wt_0_1.T)
 
         # Adjust Weight
-        wt_1_2 += l2_wt_delta * alpha
-        wt_0_1 += l1_wt_delta * alpha
+        wt_1_2 -= l2_wt_delta.T.dot(l2) * alpha
+        wt_0_1 -= l1_wt_delta.T.dot(l1) * alpha
 
-## Testing
+    
+## Testing ##
 
     ## Predict
 
@@ -107,10 +109,19 @@ for epoch in range(epochs):
 
     # Accuracy
 
-## Visualize
+    ## Visualize
+    # Print Error
+    if(epoch % freq == 0):
+        train_accuracy_plot[int(epoch/freq)] = correct_cnt / float(len(labels))
+        print(epoch, "Train Acc: ", train_accuracy_plot[int(epoch/freq)])
+        
 
 # Graph Error
-# Print Error
+
+fig, ax = plt.subplots()
+plt.ylabel("Train Accuracy")
+ax.plot(train_accuracy_plot)
+plt.show()
 
 
 
