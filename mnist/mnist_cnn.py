@@ -100,18 +100,27 @@ for epochs in range(epochs):
                 assert sect.shape == (100,1,3,3) , f"Expected (100,1,3,3) actual {sect.shape}"
                 sects.append(sect)
         
-        # Now take the list of sliced images and stack each mini-image into a single giant array
         expanded_input = np.concatenate(sects, axis=1) # 
         
+        # Now we have each image in the batch, cut up into many small images
         expanded_shape = expanded_input.shape
-        assert expanded_shape == (100, 625, 3, 3) , f"Expected (100,625,3,3) actual {expanded_shape}"
+        assert expanded_shape == (100, 625, 3, 3) , f"Expected (100,625,3,3) actual {expanded_shape}" # 100 images cut up into 625 3*3 mini-images 
         
-        # Forward Prop
-        l0 = expanded_input.reshape(expanded_shape[0]*expanded_shape[1], -1)
-        assert (l0.shape == (62500,9)), f"Expected (62500,9) actual {l0.shape} "
+        # Now lets take all those images and stack them in an array
+        flattened_input = expanded_input.reshape(expanded_shape[0]*expanded_shape[1], -1)
+        assert (flattened_input.shape == (62500,9)), f"Expected (62500,9) actual {flattened_input.shape} "
         
-        l1 = tanh(l0.dot(kernels)) # Forward prop with activation
-        assert (l1.shape == (62500,16)), f"Expected (62500,16) actual {l1_dropout.shape}"
+        # Forward prop the transformed input through our kernels (aka weights)
+        kernel_output = flattened_input.dot(kernels)
+        assert (kernel_output.shape == (62500,16)), f"Expected (62500,16) actual {kernel_output.shape}"
+
+        # Now reassemble the mini-images into single images
+        l1 = kernel_output.reshape(expanded_shape[0], -1)
+
+        # Apply layer 1 activation
+        l1 = tanh(l1)
+
+        # prepare dropout mask
         dropout_mask = np.random.randint(2, size=l1.shape) # The dropout mask is 0s and 1s
         l1_dropout = l1 * dropout_mask * 2 # Apply dropout mask and double the value at each element to maintain the signal after reduction by dropout
         
