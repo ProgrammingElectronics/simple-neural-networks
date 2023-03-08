@@ -6,8 +6,6 @@ from keras.datasets import mnist
 ## Functions #################
 
 # one hot embedding
-
-
 def embedding(x):
 
     embedding = np.zeros((1, 10))
@@ -15,30 +13,22 @@ def embedding(x):
     return embedding
 
 # tanh
-
-
 def tanh(x):
 
     return np.tanh(x)
 
 # tanh derivative
-
-
 def tanh_deriv(x):
 
     return 1 - (x ** 2)
 
 # softmax
-
-
 def softmax(x):
 
     temp = np.exp(x)
     return temp / np.sum(temp)
 
 # convolution
-
-
 def get_image_section(layer, start_row, stop_row, start_col, stop_col):
 
     section = layer[:,start_row:stop_row, start_col:stop_col]
@@ -75,7 +65,7 @@ kernel_rows = 3
 kernel_cols = 3
 num_kernels = 16
 num_labels = 10
-hidden_layer_size = (input_rows - kernel_rows) * (input_cols - kernel_cols)
+hidden_layer_size = ((input_rows - kernel_rows) * (input_cols - kernel_cols)) * num_kernels
 
 ## Weights ###################
 kernels = 0.02*np.random.random((kernel_rows*kernel_cols, num_kernels))-0.01
@@ -93,12 +83,16 @@ for epochs in range(epochs):
 
         batch_start = batch * batch_size
         batch_stop = batch_start + batch_size
-        l0 = images[batch_start:batch_stop].reshape(-1, 28, 28)
+        
+        l0_raw = images[batch_start:batch_stop].reshape(-1, 28, 28)
 
+        # Slice up each image into a bunch of kernel size images and append all images to a list
+        # Each image will be sliced into 625 kernel size images
+        # This is our "convolution"
         sects = list()
         for row_start in range(input_rows - kernel_rows):
             for col_start in range(input_cols - kernel_cols):
-                sect = get_image_section(l0,
+                sect = get_image_section(l0_raw,
                                          row_start,
                                          row_start+kernel_rows,
                                          col_start,
@@ -106,15 +100,26 @@ for epochs in range(epochs):
                 assert sect.shape == (100,1,3,3) , f"Expected (100,1,3,3) actual {sect.shape}"
                 sects.append(sect)
         
+        # Now take the list of sliced images and stack each mini-image into a single giant array
         expanded_input = np.concatenate(sects, axis=1) # 
+        
         expanded_shape = expanded_input.shape
         assert expanded_shape == (100, 625, 3, 3) , f"Expected (100,625,3,3) actual {expanded_shape}"
-        flattened_input = expanded_input.reshape(expanded_shape[0]*expanded_shape[1], -1)
-        assert (flattened_input.shape == (62500,9)), f"Expected (62500,9) actual {flattened_input.shape} "
-        # Drop Out
         
+        # Forward Prop
+        l0 = expanded_input.reshape(expanded_shape[0]*expanded_shape[1], -1)
+        assert (l0.shape == (62500,9)), f"Expected (62500,9) actual {l0.shape} "
+        
+        l1 = tanh(l0.dot(kernels)) # Forward prop with activation
+        assert (l1.shape == (62500,16)), f"Expected (62500,16) actual {l1_dropout.shape}"
+        dropout_mask = np.random.randint(2, size=l1.shape) # The dropout mask is 0s and 1s
+        l1_dropout = l1 * dropout_mask * 2 # Apply dropout mask and double the value at each element to maintain the signal after reduction by dropout
+        
+        l2 = l1_dropout.dot(wt_1_2)
+
+        l2_softmax = softmax(l2)
+
         # Predict
-        # Forward Prop with convolution
 
         # Compare
         # NO ERROR
