@@ -1,6 +1,6 @@
 ## imports #################
 import numpy as np
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 from keras.datasets import mnist
 
 np.random.seed(1)
@@ -64,7 +64,7 @@ test_labels = np.array([embedding(y)
                        for y in y_test]).reshape((len(y_test), -1))
 
 ## Controls ###################
-epochs = 2
+epochs = 300
 alpha = 2
 batch_size = 128
 num_batches = int(len(images)/batch_size)
@@ -86,7 +86,7 @@ wt_1_2 = 0.2*np.random.random((hidden_layer_size, num_labels))-0.1
 
 # Visualization
 plot_freq = 10
-accuracy_plot = np.zeros(int(epochs/plot_freq))
+train_accuracy_plot = np.zeros(int(epochs/plot_freq))
 
 ## Training ###################
 for epoch in range(epochs):
@@ -160,16 +160,22 @@ for epoch in range(epochs):
         l2_delta = delta / (batch_size * l2.shape[0])
         l1_delta = l2_delta.dot(wt_1_2.T) * tanh_deriv(l1)
         l1_delta *= dropout_mask
-        l1_delta_reshape = l1_delta.reshape(kernel_output)
+        l1_delta_reshape = l1_delta.reshape(kernel_output.shape)
 
         # Adjust Weights
         wt_1_2 -= l1.T.dot(l2_delta) * alpha
 
-        kernels -= l1_delta_reshape.T.dot(flattened_input) * alpha
+        kernels -= flattened_input.T.dot(l1_delta_reshape) * alpha
 
 ## Testing ###################
 
+    test_correct_cnt = 0
+    
     # Predict
+    
+
+    
+
     # Forward Prop with convolution
 
     # Compare
@@ -182,5 +188,15 @@ for epoch in range(epochs):
         # console
         print(epoch, "TRAIN ACC -> ", train_correct)
         # accuracy plots
-
+        train_accuracy_plot[int(epoch / plot_freq)] = train_correct
         # weight color plots?
+
+# Graph Error
+fig, ax = plt.subplots() # an empty figure with no Axes
+ax.plot(range(len(train_accuracy_plot)),train_accuracy_plot, label=('train'))
+# ax.plot(range(len(test_accuracy_plot)), test_accuracy_plot, label=('test'))
+ax.set_xlabel('epochs')
+ax.set_ylabel('accuracy')
+ax.set_title("mnist cnn")
+ax.legend()
+plt.show()
